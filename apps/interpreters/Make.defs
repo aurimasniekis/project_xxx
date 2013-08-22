@@ -41,3 +41,11 @@ endif
 ifeq ($(CONFIG_INTERPRETERS_FICL),y)
 CONFIGURED_APPS += interpreters/ficl
 endif
+
+ifeq ($(CONFIG_INTERPRETERS_LUA),y)
+CONFIGURED_APPS += interpreters/lua
+endif
+
+ifeq ($(CONFIG_INTERPRETERS_LUALIB),y)
+CONFIGURED_APPS += interpreters/lualib
+endif
