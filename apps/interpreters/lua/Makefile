@@ -42,7 +42,7 @@ include $(APPDIR)/Make.defs
 ASRCS  =
 CSRCS  = lua.c
 
-CFLAGS = -I$(APPDIR)/interpreters/lualib/lua-5.2.0/src -I$(TOPDIR)
+CFLAGS += -I$(APPDIR)/interpreters/lualib/lua-5.2.0/src
 
 AOBJS = $(ASRCS:.S=$(OBJEXT))
 COBJS = $(CSRCS:.c=$(OBJEXT))
