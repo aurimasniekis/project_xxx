@@ -39,26 +39,28 @@ include $(APPDIR)/Make.defs
 
 # Lua Library
 
-ASRCS  =
-CSRCS  = lapi.c lcode.c lctype.c
-CSRCS  += ldebug.c ldo.c ldump.c
-CSRCS  += lfunc.c lgc.c llex.c
-CSRCS  += lmem.c lobject.c lopcodes.c
-CSRCS  += lparser.c lstate.c lstring.c
-CSRCS  += ltable.c ltm.c lundump.c
-CSRCS  += lvm.c lzio.c linit.c
-CSRCS  += lauxlib.c loadlib.c
-CSRCS  += nuttx_lua_compat.c
+LUASRC = lua-5.2.0/src
 
-CSRCS  += lbaselib.c
-CSRCS  += lbitlib.c
-CSRCS  += lcorolib.c
-CSRCS  += ldblib.c
-CSRCS  += liolib.c
-CSRCS  += lmathlib.c
-CSRCS  += loslib.c
-CSRCS  += lstrlib.c
-CSRCS  += ltablib.c
+ASRCS  =
+CSRCS = $(LUASRC)/lapi.c $(LUASRC)/lcode.c $(LUASRC)/lctype.c \
+    $(LUASRC)/ldebug.c $(LUASRC)/ldo.c $(LUASRC)/ldump.c \
+    $(LUASRC)/lfunc.c $(LUASRC)/lgc.c $(LUASRC)/llex.c \
+    $(LUASRC)/lmem.c $(LUASRC)/lobject.c $(LUASRC)/lopcodes.c \
+    $(LUASRC)/lparser.c $(LUASRC)/lstate.c $(LUASRC)/lstring.c \
+    $(LUASRC)/ltable.c $(LUASRC)/ltm.c $(LUASRC)/lundump.c \
+    $(LUASRC)/lvm.c $(LUASRC)/lzio.c $(LUASRC)/linit.c \
+    $(LUASRC)/lauxlib.c $(LUASRC)/loadlib.c \
+    nuttx_lua_compat.c
+              
+CSRCS += $(LUASRC)/lbaselib.c
+CSRCS += $(LUASRC)/lbitlib.c
+CSRCS += $(LUASRC)/lcorolib.c
+CSRCS += $(LUASRC)/ldblib.c
+CSRCS += $(LUASRC)/liolib.c
+CSRCS += $(LUASRC)/lmathlib.c
+CSRCS += $(LUASRC)/loslib.c
+CSRCS += $(LUASRC)/lstrlib.c
+CSRCS += $(LUASRC)/ltablib.c
 
 
 AOBJS = $(ASRCS:.S=$(OBJEXT))
@@ -77,7 +79,7 @@ else
 endif
 endif
 
-ROOTDEPPATH = --dep-path ./lua-5.2.0/src --dep-path $(APPDIR)/..
+ROOTDEPPATH = --dep-path .
 VPATH = 
 
 # Build targets
