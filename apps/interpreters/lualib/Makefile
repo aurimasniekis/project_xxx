@@ -64,29 +64,30 @@ CSRCS += $(LUASRC)/lstrlib.c
 CSRCS += $(LUASRC)/ltablib.c
 
 
-AOBJS = $(ASRCS:.S=$(OBJEXT))
-COBJS = $(CSRCS:.c=$(OBJEXT))
+AOBJS		= $(ASRCS:.S=$(OBJEXT))
+COBJS		= $(CSRCS:.c=$(OBJEXT))
 
-SRCS = $(ASRCS) $(CSRCS)
-OBJS = $(AOBJS) $(COBJS)
+SRCS		= $(ASRCS) $(CSRCS)
+OBJS		= $(AOBJS) $(COBJS)
 
 ifeq ($(CONFIG_WINDOWS_NATIVE),y)
-  BIN		= ..\libapps$(LIBEXT)
+  BIN		= ..\..\libapps$(LIBEXT)
 else
 ifeq ($(WINTOOL),y)
-  BIN		= ..\\libapps$(LIBEXT)
+  BIN		= ..\\..\\libapps$(LIBEXT)
 else
-  BIN		= ../libapps$(LIBEXT)
+  BIN		= ../../libapps$(LIBEXT)
 endif
 endif
 
-ROOTDEPPATH = --dep-path .
-VPATH = 
+ROOTDEPPATH	= --dep-path .
 
-# Build targets
+# Common build
+
+VPATH		= 
 
 all: .built
-.PHONY: context .depend depend clean distclean
+.PHONY: clean depend distclean
 
 $(AOBJS): %$(OBJEXT): %.S
 	$(call ASSEMBLE, $<, $@)
@@ -98,7 +99,14 @@ $(COBJS): %$(OBJEXT): %.c
 	$(call ARCHIVE, $(BIN), $(OBJS))
 	@touch .built
 
-context:
+# ifeq ($(CONFIG_NSH_BUILTIN_APPS),y)
+# $(BUILTIN_REGISTRY)$(DELIM)$(APPNAME)_main.bdat: $(DEPCONFIG) Makefile
+#     $(call REGISTER,$(APPNAME),$(PRIORITY),$(STACKSIZE),$(APPNAME)_main)
+# 
+# context: $(BUILTIN_REGISTRY)$(DELIM)$(APPNAME)_main.bdat
+# else
+# context:
+# endif
 
 .depend: Makefile $(SRCS)
 	@$(MKDEP) $(ROOTDEPPATH) "$(CC)" -- $(CFLAGS) -- $(SRCS) >Make.dep
@@ -115,4 +123,5 @@ distclean: clean
 	$(call DELFILE, .depend)
 
 -include Make.dep
+
 
