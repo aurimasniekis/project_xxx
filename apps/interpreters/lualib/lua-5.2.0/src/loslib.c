@@ -1,5 +1,5 @@
 /*
-** $Id: loslib.c,v 1.38 2011/11/30 12:35:05 roberto Exp $
+** $Id: loslib.c,v 1.40 2012/10/19 15:54:02 roberto Exp $
 ** Standard Operating System library
 ** See Copyright Notice in lua.h
 */
@@ -26,11 +26,12 @@
 #if !defined(LUA_STRFTIMEOPTIONS)
 
 #if !defined(LUA_USE_POSIX)
-#define LUA_STRFTIMEOPTIONS     { "aAbBcdHIjmMpSUwWxXyYz%", "" }
+#define LUA_STRFTIMEOPTIONS	{ "aAbBcdHIjmMpSUwWxXyYz%", "" }
 #else
-#define LUA_STRFTIMEOPTIONS     { "aAbBcCdDeFgGhHIjmMnprRStTuUVwWxXyYzZ%", "", \
-                                "E", "cCxXyY",  \
-                                "O", "deHImMSuUVwWy" }
+#define LUA_STRFTIMEOPTIONS \
+	{ "aAbBcCdDeFgGhHIjmMnprRStTuUVwWxXyYzZ%", "" \
+	  "", "E", "cCxXyY",  \
+	  "O", "deHImMSuUVwWy" }
 #endif
 
 #endif
@@ -43,7 +44,7 @@
 */
 #if defined(LUA_USE_MKSTEMP)
 #include <unistd.h>
-#define LUA_TMPNAMBUFSIZE       32
+#define LUA_TMPNAMBUFSIZE	32
 #define lua_tmpnam(b,e) { \
         strcpy(b, "/tmp/lua_XXXXXX"); \
         e = mkstemp(b); \
@@ -51,9 +52,10 @@
         e = (e == -1); }
 
 #elif !defined(lua_tmpnam)
-
-#define LUA_TMPNAMBUFSIZE       L_tmpnam
-#define lua_tmpnam(b,e)         { e = (tmpnam(b) == NULL); }
+// #define LUA_TMPNAMBUFSIZE	L_tmpnam
+// #define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
+#define LUA_TMPNAMBUFSIZE	32
+#define lua_tmpnam(b,e)	
 
 #endif
 
@@ -78,7 +80,9 @@
 
 static int os_execute (lua_State *L) {
   const char *cmd = luaL_optstring(L, 1, NULL);
-  int stat = system(cmd);
+
+ int stat = EXEC_SYSTEM(cmd);
+
   if (cmd != NULL)
     return luaL_execresult(L, stat);
   else {
@@ -90,14 +94,16 @@ static int os_execute (lua_State *L) {
 
 static int os_remove (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
-  return luaL_fileresult(L, remove(filename) == 0, filename);
+//TODO  return luaL_fileresult(L, remove(filename) == 0, filename);
+
+return 0;
 }
 
 
 static int os_rename (lua_State *L) {
   const char *fromname = luaL_checkstring(L, 1);
   const char *toname = luaL_checkstring(L, 2);
-  return luaL_fileresult(L, rename(fromname, toname) == 0, fromname);
+  return luaL_fileresult(L, rename(fromname, toname) == 0, NULL);
 }
 
 
@@ -119,7 +125,7 @@ static int os_getenv (lua_State *L) {
 
 
 static int os_clock (lua_State *L) {
-  lua_pushnumber(L, ((lua_Number)clock())/(lua_Number)CLOCKS_PER_SEC);
+  // lua_pushnumber(L, ((lua_Number)clock())/(lua_Number)CLOCKS_PER_SEC);
   return 1;
 }
 
@@ -211,15 +217,10 @@ static int os_date (lua_State *L) {
     setfield(L, "day", stm->tm_mday);
     setfield(L, "month", stm->tm_mon+1);
     setfield(L, "year", stm->tm_year+1900);
-#ifdef LUA_NUTTX
-    setfield(L, "wday", 0);
-    setfield(L, "yday", 0);
-    setboolfield(L, "isdst", 0);
-#else
-    setfield(L, "wday", stm->tm_wday+1);
-    setfield(L, "yday", stm->tm_yday+1);
-    setboolfield(L, "isdst", stm->tm_isdst);
-#endif
+	//TODO
+    // setfield(L, "wday", stm->tm_wday+1);
+    // setfield(L, "yday", stm->tm_yday+1);
+    // setboolfield(L, "isdst", stm->tm_isdst);
   }
   else {
     char cc[4];
@@ -257,9 +258,8 @@ static int os_time (lua_State *L) {
     ts.tm_mday = getfield(L, "day", -1);
     ts.tm_mon = getfield(L, "month", -1) - 1;
     ts.tm_year = getfield(L, "year", -1) - 1900;
-#ifndef LUA_NUTTX
-    ts.tm_isdst = getboolfield(L, "isdst");
-#endif
+	//TODO
+    // ts.tm_isdst = getboolfield(L, "isdst");
     t = mktime(&ts);
   }
   if (t == (time_t)(-1))
@@ -271,8 +271,9 @@ static int os_time (lua_State *L) {
 
 
 static int os_difftime (lua_State *L) {
-  lua_pushnumber(L, difftime((time_t)(luaL_checknumber(L, 1)),
-                             (time_t)(luaL_optnumber(L, 2, 0))));
+	//TODO
+  // lua_pushnumber(L, difftime((time_t)(luaL_checknumber(L, 1)),
+  //                            (time_t)(luaL_optnumber(L, 2, 0))));
   return 1;
 }
 
@@ -286,21 +287,19 @@ static int os_setlocale (lua_State *L) {
      "numeric", "time", NULL};
   const char *l = luaL_optstring(L, 1, NULL);
   int op = luaL_checkoption(L, 2, "all", catnames);
-  lua_pushstring(L, setlocale(cat[op], l));
+//TODO
+  // lua_pushstring(L, setlocale(cat[op], l));
   return 1;
 }
 
 
 static int os_exit (lua_State *L) {
   int status;
-
   if (lua_isboolean(L, 1))
     status = (lua_toboolean(L, 1) ? EXIT_SUCCESS : EXIT_FAILURE);
   else
     status = luaL_optint(L, 1, EXIT_SUCCESS);
-#ifndef LUA_NUTTX
   if (lua_toboolean(L, 2))
-#endif
     lua_close(L);
   if (L) exit(status);  /* 'if' to avoid warnings for unreachable 'return' */
   return 0;

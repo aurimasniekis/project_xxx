@@ -41,7 +41,6 @@ include $(APPDIR)/Make.defs
 
 LUASRC = lua-5.2.0/src
 
-
 ASRCS  =
 CSRCS = $(LUASRC)/lapi.c $(LUASRC)/lcode.c $(LUASRC)/lctype.c \
     $(LUASRC)/ldebug.c $(LUASRC)/ldo.c $(LUASRC)/ldump.c \
@@ -50,7 +49,7 @@ CSRCS = $(LUASRC)/lapi.c $(LUASRC)/lcode.c $(LUASRC)/lctype.c \
     $(LUASRC)/lparser.c $(LUASRC)/lstate.c $(LUASRC)/lstring.c \
     $(LUASRC)/ltable.c $(LUASRC)/ltm.c $(LUASRC)/lundump.c \
     $(LUASRC)/lvm.c $(LUASRC)/lzio.c $(LUASRC)/linit.c \
-    $(LUASRC)/lauxlib.c $(LUASRC)/loadlib.c \
+    $(LUASRC)/lauxlib.c $(LUASRC)/loadlib.c $(LUASRC)/nutt_glue.c \
     nuttx_lua_compat.c
               
 CSRCS += $(LUASRC)/lbaselib.c

@@ -77,12 +77,12 @@ freopen(const char *filename, const char *mode, FILE *stream)
 	return stream;
 }
 
-int
-strcoll(const char *s1, const char *s2)
-{
-	/* this is good enough for us */
-	return strcmp(s1, s2);
-}
+// int
+// strcoll(const char *s1, const char *s2)
+// {
+//     /* this is good enough for us */
+//     return strcmp(s1, s2);
+// }
 
 void *
 memchr(const void *s, int c, size_t n)
