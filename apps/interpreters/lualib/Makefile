@@ -1,8 +1,8 @@
 ############################################################################
-# apps/interpreters/lualib/Makefile
+# apps/interpreters/lua/Makefile
 #
-#   Copyright (C) 2013 Aurimas Niekis. All rights reserved.
-#   Author: Aurimas Niekis <aurimas.niekis@gmail.com>
+#   Copyright (C) 2012 Michael Smith. All rights reserved.
+#            Gregory Nutt <gnutt@nuttx.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -14,9 +14,6 @@
 #    notice, this list of conditions and the following disclaimer in
 #    the documentation and/or other materials provided with the
 #    distribution.
-# 3. Neither the name NuttX nor the names of its contributors may be
-#    used to endorse or promote products derived from this software
-#    without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -37,56 +34,51 @@
 -include $(TOPDIR)/Make.defs
 include $(APPDIR)/Make.defs
 
-# Lua Library
+# LUA library
 
-LUASRC = lua-5.2.0/src
+LUASRC		= lua-5.2.0/src
 
-CFLAGS = -I$(APPDIR)/include -I$(TOPDIR)
+CFLAGS		+= 
 
-ASRCS  =
-CSRCS = $(LUASRC)/lapi.c $(LUASRC)/lcode.c $(LUASRC)/lctype.c \
-    $(LUASRC)/ldebug.c $(LUASRC)/ldo.c $(LUASRC)/ldump.c \
-    $(LUASRC)/lfunc.c $(LUASRC)/lgc.c $(LUASRC)/llex.c \
-    $(LUASRC)/lmem.c $(LUASRC)/lobject.c $(LUASRC)/lopcodes.c \
-    $(LUASRC)/lparser.c $(LUASRC)/lstate.c $(LUASRC)/lstring.c \
-    $(LUASRC)/ltable.c $(LUASRC)/ltm.c $(LUASRC)/lundump.c \
-    $(LUASRC)/lvm.c $(LUASRC)/lzio.c $(LUASRC)/linit.c \
-    $(LUASRC)/lauxlib.c $(LUASRC)/loadlib.c \
-    nuttx_lua_compat.c
-              
-CSRCS += $(LUASRC)/lbaselib.c
-CSRCS += $(LUASRC)/lbitlib.c
-CSRCS += $(LUASRC)/lcorolib.c
-CSRCS += $(LUASRC)/ldblib.c
-CSRCS += $(LUASRC)/liolib.c
-CSRCS += $(LUASRC)/lmathlib.c
-CSRCS += $(LUASRC)/loslib.c
-CSRCS += $(LUASRC)/lstrlib.c
-CSRCS += $(LUASRC)/ltablib.c
+ASRCS		=
+CSRCS		= $(LUASRC)/lapi.c $(LUASRC)/lcode.c $(LUASRC)/lctype.c \
+		  $(LUASRC)/ldebug.c $(LUASRC)/ldo.c $(LUASRC)/ldump.c \
+		  $(LUASRC)/lfunc.c $(LUASRC)/lgc.c $(LUASRC)/llex.c \
+		  $(LUASRC)/lmem.c $(LUASRC)/lobject.c $(LUASRC)/lopcodes.c \
+		  $(LUASRC)/lparser.c $(LUASRC)/lstate.c $(LUASRC)/lstring.c \
+		  $(LUASRC)/ltable.c $(LUASRC)/ltm.c $(LUASRC)/lundump.c \
+		  $(LUASRC)/lvm.c $(LUASRC)/lzio.c $(LUASRC)/linit.c \
+		  $(LUASRC)/lauxlib.c $(LUASRC)/loadlib.c \
+		  nuttx_lua_compat.c
 
+CSRCS		+= $(LUASRC)/lbaselib.c
+CSRCS		+= $(LUASRC)/lbitlib.c
+CSRCS		+= $(LUASRC)/lcorolib.c
+CSRCS		+= $(LUASRC)/ldblib.c
+CSRCS		+= $(LUASRC)/liolib.c
+CSRCS		+= $(LUASRC)/lmathlib.c
+CSRCS		+= $(LUASRC)/loslib.c
+CSRCS		+= $(LUASRC)/lstrlib.c
+CSRCS		+= $(LUASRC)/ltablib.c
 
-AOBJS = $(ASRCS:.S=$(OBJEXT))
-COBJS = $(CSRCS:.c=$(OBJEXT))
+AOBJS		= $(ASRCS:.S=$(OBJEXT))
+COBJS		= $(CSRCS:.c=$(OBJEXT))
 
-SRCS = $(ASRCS) $(CSRCS)
-OBJS = $(AOBJS) $(COBJS)
+SRCS		= $(ASRCS) $(CSRCS)
+OBJS		= $(AOBJS) $(COBJS)
 
-ifeq ($(CONFIG_WINDOWS_NATIVE),y)
-  BIN		= ..\libapps$(LIBEXT)
-else
 ifeq ($(WINTOOL),y)
-  BIN		= ..\\libapps$(LIBEXT)
+  BIN		= "${shell cygpath -w  $(APPDIR)/libapps$(LIBEXT)}"
 else
-  BIN		= ../libapps$(LIBEXT)
-endif
+  BIN		= "$(APPDIR)/libapps$(LIBEXT)"
 endif
 
-ROOTDEPPATH = --dep-path .
-VPATH = 
+ROOTDEPPATH	= --dep-path .
+VPATH		= 
 
 # Build targets
 
-all: .built
+all:	.built
 .PHONY: context .depend depend clean distclean
 
 $(AOBJS): %$(OBJEXT): %.S
@@ -102,18 +94,17 @@ $(COBJS): %$(OBJEXT): %.c
 context:
 
 .depend: Makefile $(SRCS)
-	@$(MKDEP) $(ROOTDEPPATH) "$(CC)" -- $(CFLAGS) -- $(SRCS) >Make.dep
+	@$(MKDEP) $(ROOTDEPPATH) $(CC) -- $(CFLAGS) -- $(SRCS) >Make.dep
 	@touch $@
+	
 
 depend: .depend
 
 clean:
-	$(call DELFILE, .built)
+	@rm -f *.o *~ .*.swp .built
 	$(call CLEAN)
 
 distclean: clean
-	$(call DELFILE, Make.dep)
-	$(call DELFILE, .depend)
+	@rm -f Make.dep .depend
 
 -include Make.dep
-
