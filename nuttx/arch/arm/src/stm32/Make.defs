@@ -42,7 +42,7 @@ endif
 CMN_UASRCS =
 CMN_UCSRCS =
 
-CMN_ASRCS  = up_saveusercontext.S up_fullcontextrestore.S up_switchcontext.S
+CMN_ASRCS  = up_saveusercontext.S up_fullcontextrestore.S up_switchcontext.S up_setjmp.S
 CMN_ASRCS += vfork.S
 
 CMN_CSRCS  = up_assert.c up_blocktask.c up_copyfullstate.c

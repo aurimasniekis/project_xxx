@@ -14,6 +14,16 @@ config INTERPRETERS_PCODE
 		configuration implies that you have performed the required installation of the
 		Pascal run-time code.
 
+config INTERPRETERS_LUA
+	bool "Lua Application"
+	default y
+	---help---
+		Enable support for the Lua interpreter app. Required LuaLib enabled also
+
+config INTERPRETERS_LUALIB
+	bool "Lua Library"
+	default y
+
 if INTERPRETERS_PCODE
 endif
 
