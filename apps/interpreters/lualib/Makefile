@@ -77,7 +77,7 @@ else
 endif
 endif
 
-ROOTDEPPATH = --dep-path ./lua-5.2.0/src
+ROOTDEPPATH = --dep-path ./lua-5.2.0/src --dep-path $(APPDIR)/..
 VPATH = 
 
 # Build targets
