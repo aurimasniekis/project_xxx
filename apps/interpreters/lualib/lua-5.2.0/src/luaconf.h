@@ -528,7 +528,7 @@
 ** without modifying the main part of the file.
 */
 
-#include "nuttx_lua_compat.h"
+#include "../../nuttx_lua_compat.h"
 
 /* we need this even though not LUA_NUMBER_DOUBLE */
 #define LUA_IEEE754TRICK
