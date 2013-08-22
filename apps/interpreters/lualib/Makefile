@@ -41,8 +41,7 @@ include $(APPDIR)/Make.defs
 
 LUASRC = lua-5.2.0/src
 
-CFLAGS = -I$(APPDIR)/include
-
+CFLAGS = -I$(APPDIR)/include -I$(TOPDIR)
 
 ASRCS  =
 CSRCS = $(LUASRC)/lapi.c $(LUASRC)/lcode.c $(LUASRC)/lctype.c \
