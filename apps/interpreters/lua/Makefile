@@ -1,10 +1,8 @@
 ############################################################################
-# apps/px4/tests/Makefile
+# apps/interpreters/lua/Makefile
 #
-#   Copyright (C) 2011 Gregory Nutt. All rights reserved.
-#   Copyright (C) 2011-2012 Michael Smith. All rights reserved.
-#   Authors: Michael Smith <DrZiplok@me.com>
-#            Gregory Nutt <gnutt@nuttx.org>
+#   Copyright (C) 2013 Aurimas Niekis. All rights reserved.
+#   Author: Aurimas Niekis <aurimas.niekis@gmail.com>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,35 +37,35 @@
 -include $(TOPDIR)/Make.defs
 include $(APPDIR)/Make.defs
 
-CFLAGS		+= -I$(APPDIR)/interpreters/lualib/lua-5.2.0/src ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(BUILDDIR)/$(FICL_SUBDIR) $(BUILDDIR)/src}
+# Lua App
 
-ASRCS		=
-CSRCS		= lua.c
+ASRCS  =
+CSRCS  = lua.c
 
-AOBJS		= $(ASRCS:.S=$(OBJEXT))
-COBJS		= $(CSRCS:.c=$(OBJEXT))
 
-SRCS		= $(ASRCS) $(CSRCS)
-OBJS		= $(AOBJS) $(COBJS)
+AOBJS = $(ASRCS:.S=$(OBJEXT))
+COBJS = $(CSRCS:.c=$(OBJEXT))
 
-ifeq ($(WINTOOL),y)
-  BIN		= "${shell cygpath -w  $(APPDIR)/libapps$(LIBEXT)}"
+SRCS = $(ASRCS) $(CSRCS)
+OBJS = $(AOBJS) $(COBJS)
+
+ifeq ($(CONFIG_WINDOWS_NATIVE),y)
+  BIN		= ..\libapps$(LIBEXT)
 else
-  BIN		= "$(APPDIR)/libapps$(LIBEXT)"
+ifeq ($(WINTOOL),y)
+  BIN		= ..\\libapps$(LIBEXT)
+else
+  BIN		= ../libapps$(LIBEXT)
+endif
 endif
 
-ROOTDEPPATH	= --dep-path .
+ROOTDEPPATH = --dep-path .
+VPATH = 
 
-APPNAME		= lua
-PRIORITY	= SCHED_PRIORITY_DEFAULT
-STACKSIZE	= 16384
-
-# Common build
-
-VPATH		= 
+# Build targets
 
 all: .built
-.PHONY: context clean depend distclean
+.PHONY: context .depend depend clean distclean
 
 $(AOBJS): %$(OBJEXT): %.S
 	$(call ASSEMBLE, $<, $@)
@@ -77,27 +75,23 @@ $(COBJS): %$(OBJEXT): %.c
 
 .built: $(OBJS)
 	$(call ARCHIVE, $(BIN), $(OBJS))
-	$(Q) touch .built
+	@touch .built
 
-.context:
-ifeq ($(CONFIG_NSH_BUILTIN_APPS),y)
-	$(call REGISTER,$(APPNAME),$(PRIORITY),$(STACKSIZE),$(APPNAME)_main)
-	@touch $@
-endif
-
-context: .context
+context:
 
 .depend: Makefile $(SRCS)
-	$(Q) $(MKDEP) $(ROOT_DEPPATH) $(SRC_DEPPATH) $(FICL_DEPPATH) "$(CC)" -- $(CFLAGS) -- $(SRCS) >Make.dep
-	$(Q) touch $@
+	@$(MKDEP) $(ROOTDEPPATH) "$(CC)" -- $(CFLAGS) -- $(SRCS) >Make.dep
+	@touch $@
 
 depend: .depend
 
 clean:
-	@rm -f *.o *~ .*.swp .built
+	$(call DELFILE, .built)
 	$(call CLEAN)
 
 distclean: clean
-	@rm -f Make.dep .depend
+	$(call DELFILE, Make.dep)
+	$(call DELFILE, .depend)
 
 -include Make.dep
+
